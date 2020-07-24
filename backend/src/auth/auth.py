@@ -9,18 +9,20 @@ AUTH0_DOMAIN = 'chris-fsnd.eu.auth0.com'
 ALGORITHMS = ['RS256']
 API_AUDIENCE = 'CoffeeShop'
 
-## AuthError Exception
+# AuthError Exception
 '''
 AuthError Exception
 A standardized way to communicate auth failure modes
 '''
+
+
 class AuthError(Exception):
     def __init__(self, error, status_code):
         self.error = error
         self.status_code = status_code
 
 
-## Auth Header
+# Auth Header
 def get_token_auth_header():
     # Fetches access token from auth header
     token = request.headers.get('Authorization', None)
@@ -28,7 +30,7 @@ def get_token_auth_header():
         raise AuthError({
             'code': 'auth_header_not_found',
             'description': 'Authorization header not found'
-    }, 401)
+        }, 401)
 
     # Split token ("Bearer" and token string)
     parts = token.split()
@@ -59,6 +61,8 @@ def get_token_auth_header():
 '''
 Implement check_permissions(permission, payload) method
 '''
+
+
 def check_permissions(permission, payload):
     if 'permissions' not in payload:
         raise AuthError({
@@ -74,9 +78,12 @@ def check_permissions(permission, payload):
 
     return True
 
+
 '''
 implement verify_decode_jwt(token) method
 '''
+
+
 def verify_decode_jwt(token):
     # Get public key from Auth0
     json_url = urlopen(f'https://{AUTH0_DOMAIN}/.well-known/jwks.json')
@@ -115,7 +122,7 @@ def verify_decode_jwt(token):
                 issuer='https://' + AUTH0_DOMAIN + '/'
             )
             return payload
-        
+
         except jwt.ExpiredSignatureError:
             raise AuthError({
                 'code': 'token_expired',
@@ -141,6 +148,8 @@ def verify_decode_jwt(token):
 '''
 implement @requires_auth(permission) decorator method
 '''
+
+
 def requires_auth(permission=''):
     def requires_auth_decorator(f):
         @wraps(f)
