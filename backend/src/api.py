@@ -16,7 +16,7 @@ CORS(app)
 !! NOTE THIS MUST BE UNCOMMENTED ON FIRST RUN
 '''
 
-db_drop_and_create_all()
+# db_drop_and_create_all()
 
 ## ROUTES
 '''
@@ -50,7 +50,7 @@ def get_drinks():
 '''
 @app.route('/drinks-detail')
 @requires_auth(permission='get:drinks-detail')
-def get_drinks_detail(jwt):
+def get_drinks_detail(payload):
     try:
         # Same as 'drinks' endpoint above, show all details of each drink
         drinks = Drink.query.all()
@@ -73,7 +73,7 @@ def get_drinks_detail(jwt):
 '''
 @app.route('/drinks', methods=["POST"])
 @requires_auth(permission='post:drinks')
-def post_drink(jwt):
+def post_drink(payload):
     # Fetch body data
     body = request.get_json()
 
@@ -85,7 +85,7 @@ def post_drink(jwt):
     recipe = body.get('recipe')
 
     try:
-        drink = Drink(title=tirtle, recipe=json.dumps(recipe))
+        drink = Drink(title=title, recipe=json.dumps(recipe))
         drink.insert()
 
         return jsonify({
@@ -107,7 +107,7 @@ def post_drink(jwt):
 '''
 @app.route('/drinks/<int:id>', methods=['PATCH'])
 @requires_auth(permission='patch:drinks')
-def update_drink(jwt, id):
+def update_drink(payload, id):
 
     # Fetch drink (id)
     drink = Drink.query.get(id)
@@ -147,7 +147,7 @@ def update_drink(jwt, id):
 '''
 @app.route('/drinks/<int:id>', methods=['DELETE'])
 @requires_auth(permission='delete:drinks')
-def delete_drinks(jwt, id):
+def delete_drinks(payload, id):
     # Fetch drink (id)
     drink = Drink.query.get(id)
 

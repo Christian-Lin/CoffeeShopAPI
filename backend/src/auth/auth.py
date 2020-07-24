@@ -66,7 +66,7 @@ def check_permissions(permission, payload):
             'description': 'Permissions not found'
         }, 400)
 
-    if permissions not in payload['permissions']:
+    if permission not in payload['permissions']:
         raise AuthError({
             'code': 'Unauthorized',
             'description': 'Permission not allowed'
@@ -80,7 +80,7 @@ implement verify_decode_jwt(token) method
 def verify_decode_jwt(token):
     # Get public key from Auth0
     json_url = urlopen(f'https://{AUTH0_DOMAIN}/.well-known/jwks.json')
-    jwks = json.loads(jsonurl.read())
+    jwks = json.loads(json_url.read())
     # Get header
     unverified_header = jwt.get_unverified_header(token)
 
@@ -146,14 +146,7 @@ def requires_auth(permission=''):
         @wraps(f)
         def wrapper(*args, **kwargs):
             token = get_token_auth_header()
-            try:
-                payload = verify_decode_jwt(token)
-            except:
-                raise AuthError({
-                    'code': 'invalid_token',
-                    'description': 'Access denied (invalid token)'
-                }, 401)
-            
+            payload = verify_decode_jwt(token)
             check_permissions(permission, payload)
             return f(payload, *args, **kwargs)
 
